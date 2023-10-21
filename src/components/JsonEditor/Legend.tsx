@@ -1,4 +1,3 @@
-import React from 'react';
 import { CaretDownOutlined, PlusSquareOutlined, MinusSquareOutlined } from '@ant-design/icons';
 
 const Legend = () => {
