@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { getPlaceholder, isObject } from '../common';
 import { ConfigContext } from '../store';
 import AddItem from './AddItem';
@@ -43,7 +43,7 @@ function ArrayView(props: Props) {
                     uniqueKey,
                     newParentPath,
                     props.schema,
-                    allowMap,
+                    allowMap
                   )}
                 </span>
               )}
@@ -85,7 +85,7 @@ function ArrayView(props: Props) {
                       uniqueKey,
                       newParentPath,
                       props.schema,
-                      allowMap,
+                      allowMap
                     )}
                   </span>
                 )}

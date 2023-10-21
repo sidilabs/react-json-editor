@@ -2,7 +2,6 @@
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, Input, InputNumber, Select, Space } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
-import React from 'react';
 import { useContext, useState } from 'react';
 import { ConfigContext } from '../store';
 import { DataType, getParentRef, navigateSchema, typeMap } from '../common';

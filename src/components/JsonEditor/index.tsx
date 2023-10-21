@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import './styles/index.scss';
-import React from 'react';
 import cloneDeep from 'lodash.clonedeep';
 import JsonView from './components/JsonView';
 

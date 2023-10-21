@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { getPlaceholder, getSchemaObject, isObject, navigateSchema } from '../common';
 import AddItem from './AddItem';
 import ToolsView from './Tools';

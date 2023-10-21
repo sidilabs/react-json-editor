@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CaretDownOutlined } from '@ant-design/icons';
-import React, { useContext } from 'react';
+import { useContext } from 'react';
 import { isObject } from '../common';
 import { ConfigContext } from '../store';
 

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { MinusSquareOutlined } from '@ant-design/icons';
 import { Select } from 'antd';
-import React from 'react';
 import { ConfigContext } from '../store';
 import { getTypeString, DataType, navigateSchema, getSchemaObject } from '../common';
 import { useContext } from 'react';
