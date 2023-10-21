@@ -17,7 +17,7 @@ export type JsonEditorProps = {
   onChange: (data: any) => void;
 };
 
-function JsonEditor({ data, onChange, schema, optionsMap, width }: JsonEditorProps) {
+export const JsonEditor = ({ data, onChange, schema, optionsMap, width }: JsonEditorProps) => {
   return (
     <div className="jsonEditorContainer" style={{ width: width ?? 500, marginBottom: '20px' }}>
       <JsonView
@@ -31,6 +31,4 @@ function JsonEditor({ data, onChange, schema, optionsMap, width }: JsonEditorPro
       />
     </div>
   );
-}
-
-export default JsonEditor;
+};
