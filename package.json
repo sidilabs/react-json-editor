@@ -70,8 +70,5 @@
   },
   "sideEffects": [
     "**/*.css"
-  ],
-  "publishConfig": {
-    "@sidilabs:registry": "https://npm.pkg.github.com"
-  }
+  ]
 }
