@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useContext } from 'react';
-import { getPlaceholder, isObject } from '../common';
-import { ConfigContext } from '../store';
-import AddItem from './AddItem';
-import CollapsePart from './Collapse';
-import ToolsView from './Tools';
+/* eslint-disable @typescript-eslint/no-implicit-any */
+import { useContext } from "react";
+import { getPlaceholder, isObject } from "../common";
+import { ConfigContext } from "../store";
+import AddItem from "./AddItem";
+import CollapsePart from "./Collapse";
+import ToolsView from "./Tools";
 
 type Props = {
   fieldValue: any[];
@@ -22,7 +23,7 @@ function ArrayView(props: Props) {
 
   return (
     <div className="arrayContent">
-      <div style={{ marginTop: '10px' }}>
+      <div style={{ marginTop: "10px" }}>
         {props.fieldValue.map((item: any, index: number) => {
           const uniqueKey = `${props.parentUniqueKey}-${index}`;
           const isObjectResult = isObject(item);
@@ -52,8 +53,8 @@ function ArrayView(props: Props) {
           return (
             <div key={uniqueKey} className="indexLine" data-key={uniqueKey}>
               <div className="lineData" data-obj={isObjectResult}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center ' }}>
-                  {isObjectResult ? <div style={{ display: 'flex', alignItems: 'center' }}>{content}</div> : content}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center " }}>
+                  {isObjectResult ? <div style={{ display: "flex", alignItems: "center" }}>{content}</div> : content}
                   {isObjectResult && (
                     <ToolsView
                       uniqueKey={uniqueKey}
@@ -96,7 +97,6 @@ function ArrayView(props: Props) {
       </div>
       <div>
         <AddItem
-          key={props.parentUniqueKey}
           uniqueKey={props.parentUniqueKey}
           deepLevel={props.deepLevel}
           sourceData={props.fieldValue}

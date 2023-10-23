@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { MinusSquareOutlined } from '@ant-design/icons';
-import { Select } from 'antd';
-import { ConfigContext } from '../store';
-import { getTypeString, DataType, navigateSchema, getSchemaObject } from '../common';
-import { useContext } from 'react';
+/* eslint-disable @typescript-eslint/no-implicit-any */
+import { MinusSquareOutlined } from "@ant-design/icons";
+import { Select } from "antd";
+import { ConfigContext } from "../store";
+import { getTypeString, DataType, navigateSchema, getSchemaObject } from "../common";
+import { useContext } from "react";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CMinusSquareOutlined: any = MinusSquareOutlined;
@@ -19,7 +20,7 @@ function ToolsView(props: {
   const { schema } = useContext(ConfigContext);
 
   //parente fixed - any direct property cannot be changed
-  if (navigateSchema(schema, props.parentPath.split('.'))?.fixed) {
+  if (navigateSchema(schema, props.parentPath.split("."))?.fixed) {
     return null;
   }
 
@@ -27,7 +28,7 @@ function ToolsView(props: {
   const isObjectInSchema = Object.keys(schemaObject.properties || {}).length > 0;
 
   const isSchemaType = isObjectInSchema || schemaObject.type !== undefined;
-  const schemaType = isObjectInSchema ? 'object' : schemaObject.type;
+  const schemaType = isObjectInSchema ? "object" : schemaObject.type;
 
   return (
     <ConfigContext.Consumer>
@@ -58,7 +59,7 @@ function ToolsView(props: {
             </span>
           ) : (
             <span className="iconSubtraction">
-              <CMinusSquareOutlined style={{ color: 'gray' }} />
+              <CMinusSquareOutlined style={{ color: "gray" }} />
             </span>
           )}
         </span>

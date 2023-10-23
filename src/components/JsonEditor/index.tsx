@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import './styles/index.scss';
-import cloneDeep from 'lodash.clonedeep';
-import JsonView from './components/JsonView';
+/* eslint-disable @typescript-eslint/no-implicit-any */
+import "./styles/index.scss";
+import cloneDeep from "lodash.clonedeep";
+import JsonView from "./components/JsonView";
 
 export type JsonEditorProps = {
   width?: number | string;
@@ -19,7 +20,7 @@ export type JsonEditorProps = {
 
 export const JsonEditor = ({ data, onChange, schema, optionsMap, width }: JsonEditorProps) => {
   return (
-    <div className="jsonEditorContainer" style={{ width: width ?? 500, marginBottom: '20px' }}>
+    <div className="jsonEditorContainer" style={{ width: width ?? 500, marginBottom: "20px" }}>
       <JsonView
         {...{
           //the cloneDeep is to ensure that an entirily new object is being used

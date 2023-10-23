@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useRef } from 'react';
-import { getPlaceholder, getSchemaObject, isObject, navigateSchema } from '../common';
-import AddItem from './AddItem';
-import ToolsView from './Tools';
-import CollapsePart from './Collapse';
+/* eslint-disable @typescript-eslint/no-implicit-any */
+import { useMemo, useRef } from "react";
+import { getPlaceholder, getSchemaObject, isObject, navigateSchema } from "../common";
+import AddItem from "./AddItem";
+import ToolsView from "./Tools";
+import CollapsePart from "./Collapse";
 
 type Props = {
   sourceData: any;
@@ -38,17 +39,17 @@ const RenderJsonConfig = ({
 
   deepLevel = deepLevel ?? 1;
   parentUniqueKey = parentUniqueKey ?? `${deepLevel}`;
-  parentPath = parentPath ?? '';
+  parentPath = parentPath ?? "";
 
   const keyList = Object.keys(sourceData);
-  const isFixed = !!navigateSchema(schema, parentPath.split('.'))?.fixed;
+  const isFixed = !!navigateSchema(schema, parentPath.split("."))?.fixed;
 
   const renderList = useMemo(() => {
     if (!keyList.length) {
       return (
-        <div style={{ marginLeft: '20px' }}>
+        <div style={{ marginLeft: "20px" }}>
           <AddItem
-            uniqueKey={'defaultKay'}
+            uniqueKey={"defaultKay"}
             deepLevel={deepLevel as number}
             sourceData={sourceData}
             parentPath={parentPath as string}
@@ -57,7 +58,7 @@ const RenderJsonConfig = ({
       );
     }
     return (
-      <div className="objectContent" style={{ marginLeft: defaultLevel === deepLevel ? '0' : '15px' }}>
+      <div className="objectContent" style={{ marginLeft: defaultLevel === deepLevel ? "0" : "15px" }}>
         {keyList.map((fieldKey, index) => {
           const uniqueKey = `${parentUniqueKey}-${index}`;
           const fieldValue = sourceData[fieldKey];
@@ -76,12 +77,12 @@ const RenderJsonConfig = ({
                     <CollapsePart uniqueKey={uniqueKey} fieldValue={fieldValue} />
                     <span className="jsonKey">
                       {isFixed || schemaObject.mandatory ? (
-                        <span style={{ margin: '5px', fontWeight: 'bold' }}>{fieldKey}</span>
+                        <span style={{ margin: "5px", fontWeight: "bold" }}>{fieldKey}</span>
                       ) : (
                         <input
                           ref={(ref) => {
                             if (ref) {
-                              ref.value = fieldKey.replace(/^\$E-\d+\$_/, '');
+                              ref.value = fieldKey.replace(/^\$E-\d+\$_/, "");
                             }
                           }}
                           placeholder={fieldKey}
@@ -97,7 +98,7 @@ const RenderJsonConfig = ({
                         />
                       )}
                     </span>
-                    {!!placeHolder && <div style={{ margin: '5px' }}>{placeHolder}</div>}
+                    {!!placeHolder && <div style={{ margin: "5px" }}>{placeHolder}</div>}
                   </div>
                   {!isObjectResult && (
                     <span className="jsonValue">
@@ -132,7 +133,7 @@ const RenderJsonConfig = ({
                   />
                 )}
               </div>
-              {errorDuplicatedKey && <div style={{ color: 'red' }}>Duplicated key</div>}
+              {errorDuplicatedKey && <div style={{ color: "red" }}>Duplicated key</div>}
             </div>
           );
         })}
