@@ -25,13 +25,16 @@ let dataRef = {
     keyNum: 1,
     keyBool: true,
     keyArr: ['1', 1, true, [], {}],
-    keyObj: {},
+    keyObj: {
+      second: null,
+    },
   },
 };
 
 // More on writing stories with args: https://storybook.js.org/docs/react/writing-stories/args
 export const Primary: Story = {
   args: {
+    width: '440px',
     data: dataRef.data,
     schema: {},
 
