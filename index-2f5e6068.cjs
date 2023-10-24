@@ -1,0 +1,2 @@
+"use strict";Object.defineProperty(exports,Symbol.toStringTag,{value:"Module"});const r=require("./index-44a37c44.cjs"),o=r.React.createContext({});function u(e){const t=r.React.useContext(o);return r.React.useMemo(()=>typeof e=="function"?e(t):{...t,...e},[t,e])}const c={};function a({components:e,children:t,disableParentContext:i}){let n;return i?n=typeof e=="function"?e({}):e||c:n=u(e),r.React.createElement(o.Provider,{value:n},t)}exports.MDXContext=o;exports.MDXProvider=a;exports.useMDXComponents=u;
+//# sourceMappingURL=index-2f5e6068.cjs.map
