@@ -1,15 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-implicit-any */
-import { Select } from "antd";
-import React, { useMemo, useRef, useState } from "react";
-import { DataType, getParentRef, getQuoteAddress, getSchemaObject, getTypeString, typeMap } from "../common";
+import { Select } from 'antd';
+import React, { useMemo, useRef, useState, useCallback } from 'react';
+import { DataType, getQuoteAddress, getSchemaObject, getTypeString, typeMap } from '../common';
 
-import { ConfigContext } from "../store";
-import ArrayView from "./ArrayView";
+import { ConfigContext } from '../store';
+import ArrayView from './ArrayView';
 
-import RenderJsonConfig from "./RenderJsonConfig";
-import { useCallback } from "react";
-import cloneDeep from "lodash.clonedeep";
+import RenderJsonConfig from './RenderJsonConfig';
+import cloneDeep from 'lodash.clonedeep';
 
 export type JsonViewProps = {
   setEditObject: any;
@@ -36,12 +34,11 @@ function JsonView(props: JsonViewProps) {
   };
 
   const onClickDelete = useCallback(
-    (key: string, parentPath: any) => {
-      const parentData = getParentRef(editObject, parentPath);
-      if (Array.isArray(parentData)) {
-        parentData.splice(+key, 1);
+    (key: string, sourceData: any) => {
+      if (Array.isArray(sourceData)) {
+        sourceData.splice(+key, 1);
       } else {
-        Reflect.deleteProperty(parentData, key);
+        Reflect.deleteProperty(sourceData, key);
       }
       syncData(editObject);
     },
@@ -74,7 +71,7 @@ function JsonView(props: JsonViewProps) {
       }
       for (const [key, value] of Object.entries(source)) {
         if (key === currentKey) {
-          newValue[(hasCollision ? `$E-${collisionRef.current}$_` : "") + event.target.value] = source[key];
+          newValue[(hasCollision ? `$E-${collisionRef.current}$_` : '') + event.target.value] = source[key];
         } else {
           newValue[key] = value;
         }
@@ -94,15 +91,15 @@ function JsonView(props: JsonViewProps) {
     [editObjectString]
   );
 
-  const onChangeValue = (value: any, key: string, source: Record<string, any>, deepLevel = 0, parentPath = "") => {
+  const onChangeValue = (value: any, key: string, source: Record<string, any>, deepLevel = 0, parentPath = '') => {
     source[key] = value;
     if (deepLevel == 1) {
       syncData(source);
     } else {
       const arrPath: string[] = [];
-      parentPath.split(".").forEach((p) => {
+      parentPath.split('.').forEach((p) => {
         if (/.*\[\d+\]/.test(p)) {
-          arrPath.push(p.replace(/\[\d*\]/, ""));
+          arrPath.push(p.replace(/\[\d*\]/, ''));
         } else {
           arrPath.push(p);
         }
@@ -129,7 +126,7 @@ function JsonView(props: JsonViewProps) {
     key: string,
     source: Record<string, any>,
     deepLevel = 0,
-    parentPath = ""
+    parentPath = ''
   ) => {
     if (timerValueRef.current) {
       clearTimeout(timerValueRef.current);
@@ -151,7 +148,7 @@ function JsonView(props: JsonViewProps) {
       allowMap: any
     ) => {
       const thatType = getTypeString(fieldValue);
-      const newParentPath = `${!!parentPath ? parentPath + "." : ""}${fieldKey}`;
+      const newParentPath = `${!!parentPath ? parentPath + '.' : ''}${fieldKey}`;
       switch (thatType) {
         case DataType.ARRAY:
           return (
@@ -187,7 +184,7 @@ function JsonView(props: JsonViewProps) {
             return (
               <Select
                 size="small"
-                defaultValue={"string"}
+                defaultValue={'string'}
                 onChange={(value: string) => {
                   onChangeValueDelayed(value, fieldKey, sourceData, deepLevel, parentPath);
                 }}
@@ -222,7 +219,7 @@ function JsonView(props: JsonViewProps) {
                   ref.value = fieldValue;
                 }
               }}
-              className={"inputNumber"}
+              className={'inputNumber'}
               type="number"
               onChange={(event) => {
                 onChangeValueDelayed(+(event.target.value || 0), fieldKey, sourceData, deepLevel, parentPath);
@@ -281,6 +278,7 @@ function JsonView(props: JsonViewProps) {
       JSON.stringify(props.schema),
     ]
   );
+
   return (
     <ConfigContext.Provider value={value}>
       <RenderJsonConfig

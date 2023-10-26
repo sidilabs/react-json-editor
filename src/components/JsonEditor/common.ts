@@ -88,18 +88,3 @@ export const getSchemaObject = (jsonSchema: any, parentPath: string, fieldKey: s
   );
   return all || detail || {};
 };
-
-export const getParentRef = (jsObject: any, parentPath: string) => {
-  let currentParent = jsObject;
-  const arrPath = parentPath.split('.');
-  arrPath.forEach((path) => {
-    const result = /(.*)\[(\d+)\]$/.exec(path);
-    if (result) {
-      const key = result[1];
-      currentParent = currentParent[key];
-    } else {
-      currentParent = currentParent[path];
-    }
-  });
-  return currentParent;
-};
