@@ -1,5 +1,6 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import { mergeConfig } from "vite";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
@@ -14,6 +15,16 @@ const config: StorybookConfig = {
   },
   async viteFinal(config) {
     let result = mergeConfig(config, {
+      plugins: [
+        viteStaticCopy({
+          targets: [
+            {
+              src: ".storybook/.nojekyll",
+              dest: "",
+            },
+          ],
+        }),
+      ],
       // Add dependencies to pre-optimization
       optimizeDeps: {
         include: ["storybook-dark-mode"],
