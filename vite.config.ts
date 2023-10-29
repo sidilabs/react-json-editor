@@ -1,32 +1,33 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import path, { resolve } from 'path';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path, { resolve } from "path";
 
-import dts from 'vite-plugin-dts';
-import { libInjectCss } from 'vite-plugin-lib-inject-css';
+import dts from "vite-plugin-dts";
+import { libInjectCss } from "vite-plugin-lib-inject-css";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), libInjectCss(), dts()],
+  plugins: [react(), dts()],
+  define: { "process.env.NODE_ENV": '"production"' },
   resolve: {
     alias: [
       {
-        find: '@components',
-        replacement: path.join(__dirname, './src/components'),
+        find: "@components",
+        replacement: path.join(__dirname, "./src/components"),
       },
     ],
   },
   build: {
     copyPublicDir: false,
     lib: {
-      entry: resolve(__dirname, 'src/index.tsx'),
-      formats: ['es'],
+      entry: resolve(__dirname, "src/index.tsx"),
+      formats: ["es"],
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime'],
+      external: ["react", "react/jsx-runtime"],
       output: {
-        assetFileNames: 'assets/[name][extname]',
-        entryFileNames: '[name].js',
+        assetFileNames: "assets/[name][extname]",
+        entryFileNames: "[name].js",
       },
     },
   },
