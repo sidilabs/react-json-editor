@@ -1,26 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-implicit-any */
-import { PlusSquareOutlined } from "@ant-design/icons";
-import { AutoComplete, Button, Col, Input, InputNumber, Select, Space } from "antd";
-import cloneDeep from "lodash.clonedeep";
-import { useContext, useState } from "react";
-import { ConfigContext } from "../store";
-import { DataType, getParentRef, navigateSchema, typeMap } from "../common";
+import { PlusSquareOutlined } from '@ant-design/icons';
+import { AutoComplete, Button, Col, Input, InputNumber, Select, Space } from 'antd';
+import cloneDeep from 'lodash.clonedeep';
+import { useContext, useState } from 'react';
+import { ConfigContext } from '../store';
+import { DataType, navigateSchema, typeMap } from '../common';
 
 const CPlusSquareOutlined: any = PlusSquareOutlined;
 
 const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number; parentPath: string }) => {
   const { setEditObject, editObject, optionsMap, schema } = useContext(ConfigContext);
   const { uniqueKey, sourceData, parentPath } = props;
-  const schemaResult = navigateSchema(schema, [...parentPath.split("."), "*"]);
-  const isSchemaObject = Object.keys(schemaResult?.properties || {}).length > 0 || schemaResult?.type == "object";
+  const schemaResult = navigateSchema(schema, [...parentPath.split('.'), '*']);
+  const isSchemaObject = Object.keys(schemaResult?.properties || {}).length > 0 || schemaResult?.type == 'object';
 
   const isArray = Array.isArray(sourceData);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [templateData, setTemplateData] = useState<any>({});
   const [showIncreaseMap, setShowIncreaseMap] = useState<any>({});
   const onClickIncrease = (key: string, value: boolean) => {
-    setError("");
+    setError('');
     showIncreaseMap[key] = value;
     templateData[key] = {};
     setTemplateData({
@@ -31,16 +30,16 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
     });
   };
   const changeInputKey = (uniqueKey: string, event: any) => {
-    templateData[uniqueKey]["key"] = event.target.value;
+    templateData[uniqueKey]['key'] = event.target.value;
     setTemplateData({ ...templateData });
   };
   const changeInputValue = (uniqueKey: string, value: any) => {
-    templateData[uniqueKey]["value"] = value;
+    templateData[uniqueKey]['value'] = value;
     setTemplateData({ ...templateData });
   };
   const onChangeTempType = (uniqueKey: string, type: DataType) => {
-    templateData[uniqueKey]["type"] = type;
-    templateData[uniqueKey]["value"] = typeMap[type];
+    templateData[uniqueKey]['type'] = type;
+    templateData[uniqueKey]['value'] = typeMap[type];
     setTemplateData({
       ...templateData,
     });
@@ -48,13 +47,13 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
   const onConfirmIncrease = (uniqueKey: any, sourceData: any) => {
     const { key: aKey, value } = cloneDeep(templateData[uniqueKey]);
     if (Object.keys(sourceData).some((k) => k == aKey)) {
-      setError("Key already exists");
+      setError('Key already exists');
       return;
-    } else if (!isArray && (aKey == undefined || aKey === "")) {
-      setError("Key can not be empty");
+    } else if (!isArray && (aKey == undefined || aKey === '')) {
+      setError('Key can not be empty');
       return;
     }
-    const parentRef = getParentRef(editObject, parentPath);
+
     if (isSchemaObject) {
       const objectRequired: any = {};
       Object.entries(schemaResult.properties ?? {}).forEach(([key, valueProperty]: [string, any]) => {
@@ -63,7 +62,7 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
           objectRequired[key] = valueProperty.default;
         } else {
           const typeMap: any = {
-            string: "",
+            string: '',
             array: [],
             object: {},
             number: 0,
@@ -73,13 +72,13 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
         }
       });
 
-      parentRef[aKey] = objectRequired;
+      sourceData[aKey] = objectRequired;
     } else {
-      const data = value === undefined ? "" : value;
+      const data = value === undefined ? '' : value;
       if (isArray) {
-        parentRef.push(data);
+        sourceData.push(data);
       } else {
-        parentRef[aKey] = data;
+        sourceData[aKey] = data;
       }
     }
     setEditObject({ ...editObject });
@@ -90,7 +89,7 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
     const _type = isSchemaObject ? null : type;
     switch (_type) {
       case DataType.STRING:
-        const currentOptions = optionsMap?.[templateData[uniqueKey]?.["key"]] ?? [];
+        const currentOptions = optionsMap?.[templateData[uniqueKey]?.['key']] ?? [];
         return (
           <AutoComplete
             style={{ width: 100 }}
@@ -154,7 +153,7 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
                 )}
               </Select>
             </div>
-            {getTypeTemplate(templateData[uniqueKey]["type"] || DataType.STRING)}
+            {getTypeTemplate(templateData[uniqueKey]['type'] || DataType.STRING)}
             <div>
               <Space>
                 <Button size="small" type="primary" onClick={() => onConfirmIncrease(uniqueKey, sourceData)}>
@@ -166,11 +165,11 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
               </Space>
             </div>
           </Space>
-          {!!error && <div style={{ color: "red", margin: "2px 0 0 2px" }}>{error}</div>}
+          {!!error && <div style={{ color: 'red', margin: '2px 0 0 2px' }}>{error}</div>}
         </>
       ) : (
         <Col span={8}>
-          <CPlusSquareOutlined style={{ color: "#1E88E5" }} onClick={() => onClickIncrease(uniqueKey, true)} />
+          <CPlusSquareOutlined style={{ color: '#1E88E5' }} onClick={() => onClickIncrease(uniqueKey, true)} />
         </Col>
       )}
     </div>

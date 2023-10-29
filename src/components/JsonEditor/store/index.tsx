@@ -1,5 +1,4 @@
-import React from "react";
+import React from 'react';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-implicit-any */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const ConfigContext = React.createContext<any>(null);
