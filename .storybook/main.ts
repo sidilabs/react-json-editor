@@ -18,12 +18,6 @@ const config: StorybookConfig = {
       optimizeDeps: {
         include: ["storybook-dark-mode"],
       },
-      build: {
-        lib: {
-          entry: ["src/index.tsx"],
-          formats: ["es"],
-        },
-      },
     });
     // Merge custom configuration into the default config
     return result;
