@@ -10,7 +10,16 @@ type Props = {
   fieldValue: any[];
   fieldKey: string;
   sourceData: any;
-  getValue: any;
+  getValue: (
+    fieldValue: any,
+    fieldKey: string,
+    sourceData: any,
+    deepLevel: number,
+    parentUniqueKey: string,
+    parentPath: string,
+    schema: any,
+    allowMap: any
+  ) => any;
   deepLevel: number;
   parentUniqueKey: string;
   parentPath: string;
@@ -37,7 +46,7 @@ function ArrayView(props: Props) {
                 <span className="jsonValue">
                   {props.getValue(
                     item,
-                    index,
+                    `${index}`,
                     props.fieldValue,
                     props.deepLevel + 1,
                     uniqueKey,
@@ -79,7 +88,7 @@ function ArrayView(props: Props) {
                   <span className="jsonValue">
                     {props.getValue(
                       item,
-                      index,
+                      `${index}`,
                       props.fieldValue,
                       props.deepLevel + 1,
                       uniqueKey,

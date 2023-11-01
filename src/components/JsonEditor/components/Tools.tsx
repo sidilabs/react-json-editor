@@ -54,7 +54,7 @@ function ToolsView(props: {
           </span>
           {!schemaObject.mandatory ? (
             <span className="iconSubtraction">
-              <CMinusSquareOutlined onClick={() => onClickDelete(props.fieldKey, props.sourceData)} />
+              <CMinusSquareOutlined onClick={() => onClickDelete(props.fieldKey, props.parentPath)} />
             </span>
           ) : (
             <span className="iconSubtraction">

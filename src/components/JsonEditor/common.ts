@@ -88,3 +88,51 @@ export const getSchemaObject = (jsonSchema: any, parentPath: string, fieldKey: s
   );
   return all || detail || {};
 };
+
+export const getParentRef = (jsObject: any, parentPath: string) => {
+  let currentParent = jsObject;
+  const arrPath = parentPath.split('.');
+  arrPath.forEach((path) => {
+    const result = /(.*)\[(\d+)\]$/.exec(path);
+    if (result) {
+      const key = result[1];
+      currentParent = currentParent[key];
+    } else {
+      currentParent = currentParent[path];
+    }
+  });
+  return currentParent;
+};
+
+export const getParent = (jsObject: any, uniqueKey: string, upper = false) => {
+  const arr = [...uniqueKey.split('-')];
+  arr.shift();
+  arr.pop();
+  if (upper) {
+    arr.pop();
+  }
+
+  const result = getParentRecursive(jsObject, arr);
+
+  return result;
+};
+
+const getParentRecursive = (jsObject: any, uniqueArr: string[]): any => {
+  const currentArr = [...uniqueArr];
+  const currentIndex = currentArr.shift();
+  if (currentIndex === undefined) {
+    return jsObject;
+  } else {
+    if (Array.isArray(jsObject)) {
+      return getParentRecursive(jsObject[currentIndex], currentArr);
+    } else {
+      let found = {};
+      Object.values(jsObject).forEach((value, index) => {
+        if (index == +currentIndex) {
+          found = getParentRecursive(value, currentArr);
+        }
+      });
+      return found;
+    }
+  }
+};

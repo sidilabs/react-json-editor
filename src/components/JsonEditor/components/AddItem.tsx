@@ -2,16 +2,20 @@
 import { PlusSquareOutlined } from '@ant-design/icons';
 import { AutoComplete, Button, Col, Input, InputNumber, Select, Space } from 'antd';
 import cloneDeep from 'lodash.clonedeep';
+import React from 'react';
 import { useContext, useState } from 'react';
 import { ConfigContext } from '../store';
-import { DataType, navigateSchema, typeMap } from '../common';
+import { DataType, getParentRef, navigateSchema, typeMap } from '../common';
 
 const CPlusSquareOutlined: any = PlusSquareOutlined;
 
 const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number; parentPath: string }) => {
   const { setEditObject, editObject, optionsMap, schema } = useContext(ConfigContext);
   const { uniqueKey, sourceData, parentPath } = props;
-  const schemaResult = navigateSchema(schema, [...parentPath.split('.'), '*']);
+  const schemaResult = navigateSchema(
+    schema,
+    [...parentPath.split('.'), '*'].filter((p) => p != ''),
+  );
   const isSchemaObject = Object.keys(schemaResult?.properties || {}).length > 0 || schemaResult?.type == 'object';
 
   const isArray = Array.isArray(sourceData);
@@ -53,7 +57,7 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
       setError('Key can not be empty');
       return;
     }
-
+    const targetRef = getParentRef(editObject, parentPath) ?? sourceData;
     if (isSchemaObject) {
       const objectRequired: any = {};
       Object.entries(schemaResult.properties ?? {}).forEach(([key, valueProperty]: [string, any]) => {
@@ -71,14 +75,13 @@ const AddItem = (props: { uniqueKey: string; sourceData: any; deepLevel: number;
           objectRequired[key] = typeMap[valueProperty.type];
         }
       });
-
-      sourceData[aKey] = objectRequired;
+      targetRef[aKey] = objectRequired;
     } else {
       const data = value === undefined ? '' : value;
       if (isArray) {
-        sourceData.push(data);
+        targetRef.push(data);
       } else {
-        sourceData[aKey] = data;
+        targetRef[aKey] = data;
       }
     }
     setEditObject({ ...editObject });

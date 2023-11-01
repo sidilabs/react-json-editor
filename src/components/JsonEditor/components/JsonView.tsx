@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Select } from 'antd';
-import React, { useMemo, useRef, useState, useCallback } from 'react';
-import { DataType, getQuoteAddress, getSchemaObject, getTypeString, typeMap } from '../common';
+import React, { useMemo, useRef, useState } from 'react';
+import { DataType, getParent, getParentRef, getQuoteAddress, getSchemaObject, getTypeString, typeMap } from '../common';
 
 import { ConfigContext } from '../store';
 import ArrayView from './ArrayView';
 
 import RenderJsonConfig from './RenderJsonConfig';
-import cloneDeep from 'lodash.clonedeep';
+import { useCallback } from 'react';
+import { SelectBoolean, SelectOptions } from './Selects';
+import JsonRender from './JsonRender';
 
 export type JsonViewProps = {
   setEditObject: any;
@@ -24,6 +25,10 @@ export type JsonViewProps = {
 
 function JsonView(props: JsonViewProps) {
   const { editObject, setEditObject, optionsMap } = props;
+  const editObjectRef = useRef(editObject);
+  if (JSON.stringify(editObject) !== JSON.stringify(editObjectRef.current)) {
+    editObjectRef.current = editObject;
+  }
   const collisionRef = useRef(0);
   const [allowMap, setAllowMap] = useState<Record<string, boolean>>({});
 
@@ -34,24 +39,22 @@ function JsonView(props: JsonViewProps) {
   };
 
   const onClickDelete = useCallback(
-    (key: string, sourceData: any) => {
-      if (Array.isArray(sourceData)) {
-        sourceData.splice(+key, 1);
+    (key: string, parentPath: any) => {
+      const parentData = getParentRef(editObject, parentPath) ?? editObject;
+      if (Array.isArray(parentData)) {
+        parentData.splice(+key, 1);
       } else {
-        Reflect.deleteProperty(sourceData, key);
+        Reflect.deleteProperty(parentData, key);
       }
       syncData(editObject);
     },
-    [editObjectString]
+    [editObjectString],
   );
 
-  const onChangeType = useCallback(
-    (type: DataType, uniqueKey: string) => {
-      const newEditObject = getQuoteAddress(typeMap[type], uniqueKey, editObject);
-      syncData(newEditObject);
-    },
-    [editObjectString]
-  );
+  const onChangeType = useCallback((type: DataType, uniqueKey: string) => {
+    const newEditObject = getQuoteAddress(typeMap[type], uniqueKey, editObjectRef.current);
+    syncData(newEditObject);
+  }, []);
 
   const onChangeKey = useCallback(
     (
@@ -59,65 +62,66 @@ function JsonView(props: JsonViewProps) {
       currentKey: string,
       uniqueKey: string,
       source: Record<string, any>,
-      parentKey: string
+      parentKey: string,
+      parentPath: string,
     ) => {
+      const pathArray = parentPath.split('.');
+
+      const selfIsGlobal = parentPath == '';
+      const parentIsGlobal = pathArray.length == 1;
+      const upperParentArray = [...pathArray];
+      const keyParent = upperParentArray.pop() as string;
+      const upperParentPath = upperParentArray.join('.');
+      const upperParentRef = getParentRef(source, upperParentPath);
+
+      const targetRef = selfIsGlobal ? source : getParentRef(source, parentPath);
+
       const newValue: Record<string, any> = {};
-      const oldKeys = Object.keys(source);
+
+      const oldKeys = Object.keys(targetRef);
       let hasCollision = false;
       const currentIndex = +(/.*-(\d+)$/.exec(uniqueKey)?.[1] || -1);
       if (oldKeys.some((oldKey, index) => oldKey == event.target.value && index != currentIndex)) {
         hasCollision = true;
         collisionRef.current++;
       }
-      for (const [key, value] of Object.entries(source)) {
+      for (const [key, value] of Object.entries(targetRef)) {
         if (key === currentKey) {
-          newValue[(hasCollision ? `$E-${collisionRef.current}$_` : '') + event.target.value] = source[key];
+          newValue[(hasCollision ? `$E-${collisionRef.current}$_` : '') + event.target.value] = targetRef[key];
         } else {
           newValue[key] = value;
         }
       }
-      let newFinalData;
 
-      if (!/^1-\d+$/.test(uniqueKey)) {
-        //delete old key
-        newFinalData = getQuoteAddress(newValue, uniqueKey, editObject, true);
-        //add new key with content
-        newFinalData = getQuoteAddress(newValue, parentKey, newFinalData);
+      if (selfIsGlobal) {
+        source = newValue;
+      } else if (parentIsGlobal) {
+        source[parentPath] = newValue;
       } else {
-        newFinalData = newValue;
+        upperParentRef[keyParent] = newValue;
       }
-      syncData(newFinalData);
+
+      syncData(source);
     },
-    [editObjectString]
+    [editObjectString],
   );
 
-  const onChangeValue = (value: any, key: string, source: Record<string, any>, deepLevel = 0, parentPath = '') => {
+  const onChangeValue = (value: any, key: string, _: Record<string, any>, deepLevel = 0, uniqueKey = '') => {
+    const source = getParent(editObjectRef.current, uniqueKey);
     source[key] = value;
     if (deepLevel == 1) {
       syncData(source);
     } else {
       const arrPath: string[] = [];
-      parentPath.split('.').forEach((p) => {
+      uniqueKey.split('.').forEach((p) => {
         if (/.*\[\d+\]/.test(p)) {
           arrPath.push(p.replace(/\[\d*\]/, ''));
         } else {
           arrPath.push(p);
         }
       });
-      syncData(dataUpdate(source, arrPath));
+      syncData(editObjectRef.current);
     }
-  };
-
-  const dataUpdate = (data: any, path: string[]) => {
-    const workingPath = [...path];
-    const lastKey = workingPath.pop() as string;
-    const newObject = cloneDeep(editObject);
-    let current = newObject;
-    workingPath.forEach((key) => {
-      current = current[key];
-    });
-    current[lastKey] = data;
-    return newObject;
   };
 
   const timerValueRef = useRef(0);
@@ -126,7 +130,7 @@ function JsonView(props: JsonViewProps) {
     key: string,
     source: Record<string, any>,
     deepLevel = 0,
-    parentPath = ''
+    parentPath = '',
   ) => {
     if (timerValueRef.current) {
       clearTimeout(timerValueRef.current);
@@ -145,7 +149,7 @@ function JsonView(props: JsonViewProps) {
       parentUniqueKey: string,
       parentPath: string,
       schema: any,
-      allowMap: any
+      allowMap: any,
     ) => {
       const thatType = getTypeString(fieldValue);
       const newParentPath = `${!!parentPath ? parentPath + '.' : ''}${fieldKey}`;
@@ -182,19 +186,13 @@ function JsonView(props: JsonViewProps) {
           const fieldSchema = getSchemaObject(schema, parentPath, fieldKey);
           if (fieldSchema.options?.length > 0) {
             return (
-              <Select
-                size="small"
-                defaultValue={'string'}
+              <SelectOptions
+                fieldSchema={fieldSchema}
+                value={fieldValue}
                 onChange={(value: string) => {
-                  onChangeValueDelayed(value, fieldKey, sourceData, deepLevel, parentPath);
+                  onChangeValueDelayed(value, fieldKey, sourceData, deepLevel, parentUniqueKey);
                 }}
-              >
-                {fieldSchema.options.map((option: string) => (
-                  <Select.Option key={option} value={option} label="true">
-                    {option}
-                  </Select.Option>
-                ))}
-              </Select>
+              />
             );
           } else {
             return (
@@ -206,7 +204,7 @@ function JsonView(props: JsonViewProps) {
                 }}
                 style={{ width: 100 }}
                 onChange={(evt) => {
-                  onChangeValueDelayed(evt.currentTarget.value, fieldKey, sourceData, deepLevel, parentPath);
+                  onChangeValueDelayed(evt.currentTarget.value, fieldKey, sourceData, deepLevel, parentUniqueKey);
                 }}
               />
             );
@@ -222,38 +220,31 @@ function JsonView(props: JsonViewProps) {
               className={'inputNumber'}
               type="number"
               onChange={(event) => {
-                onChangeValueDelayed(+(event.target.value || 0), fieldKey, sourceData, deepLevel, parentPath);
+                onChangeValueDelayed(+(event.target.value || 0), fieldKey, sourceData, deepLevel, parentUniqueKey);
               }}
             />
           );
         case DataType.BOOLEAN:
           return (
-            <Select
-              size="small"
-              defaultValue={Boolean(fieldValue)}
+            <SelectBoolean
+              field={fieldKey}
+              value={fieldValue}
               onChange={(value: boolean) => {
-                onChangeValueDelayed(value, fieldKey, sourceData, deepLevel, parentPath);
+                onChangeValueDelayed(value, fieldKey, sourceData, deepLevel, parentUniqueKey);
               }}
-            >
-              <Select.Option value={true} label="true">
-                true
-              </Select.Option>
-              <Select.Option value={false} label="false">
-                false
-              </Select.Option>
-            </Select>
+            />
           );
       }
       return null;
     },
-    []
+    [],
   );
   const onChangeAllow = useCallback(
     (uniqueKey: string) => {
       allowMap[uniqueKey] = !allowMap[uniqueKey];
       setAllowMap({ ...allowMap });
     },
-    [JSON.stringify(allowMap)]
+    [JSON.stringify(allowMap)],
   );
 
   const value = useMemo(
@@ -276,18 +267,11 @@ function JsonView(props: JsonViewProps) {
       onChangeAllow,
       JSON.stringify(allowMap),
       JSON.stringify(props.schema),
-    ]
+    ],
   );
-
   return (
     <ConfigContext.Provider value={value}>
-      <RenderJsonConfig
-        sourceData={editObject}
-        schema={props.schema}
-        onChangeKey={onChangeKey}
-        allowMap={allowMap}
-        getValue={getValue}
-      />
+      <JsonRender onChangeKey={onChangeKey} getValue={getValue} />
     </ConfigContext.Provider>
   );
 }

@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useMemo, useRef } from 'react';
+import { useContext, useMemo, useRef } from 'react';
 import { getPlaceholder, getSchemaObject, isObject, navigateSchema } from '../common';
 import AddItem from './AddItem';
 import ToolsView from './Tools';
 import CollapsePart from './Collapse';
+import { ConfigContext } from '../store';
 
 type Props = {
   sourceData: any;
@@ -27,6 +28,7 @@ const RenderJsonConfig = ({
   allowMap,
   getValue,
 }: Props) => {
+  const { editObject } = useContext(ConfigContext);
   const filteredAllowMap: { [key: string]: boolean } = {};
   Object.entries(allowMap as { [key: string]: boolean }).forEach(([key, value]) => {
     const r = new RegExp(parentUniqueKey as string);
@@ -90,7 +92,7 @@ const RenderJsonConfig = ({
                               clearTimeout(timerRef.current);
                             }
                             timerRef.current = +setTimeout(() => {
-                              onChangeKey(event, fieldKey, uniqueKey, sourceData, parentUniqueKey);
+                              onChangeKey(event, fieldKey, uniqueKey, editObject, parentUniqueKey, parentPath);
                             }, 800);
                           }}
                           data-error={errorDuplicatedKey}
