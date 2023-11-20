@@ -10,8 +10,9 @@ const config: StorybookConfig = {
     "@storybook/addon-onboarding",
     "@storybook/addon-interactions",
   ],
-  core: {
-    builder: "@storybook/builder-vite", // 👈 The builder enabled here.
+  framework: {
+    name: "@storybook/react-vite",
+    options: {},
   },
   async viteFinal(config) {
     let result = mergeConfig(config, {
@@ -25,17 +26,8 @@ const config: StorybookConfig = {
           ],
         }),
       ],
-      // Add dependencies to pre-optimization
-      optimizeDeps: {
-        include: ["storybook-dark-mode"],
-      },
     });
-    // Merge custom configuration into the default config
     return result;
-  },
-  framework: {
-    name: "@storybook/react-vite",
-    options: {},
   },
   docs: {
     autodocs: "tag",
