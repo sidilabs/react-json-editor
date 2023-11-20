@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export enum DataType {
-  STRING = 'string',
-  NUMBER = 'number',
-  BOOLEAN = 'boolean',
-  OBJECT = 'object',
-  ARRAY = 'array',
+  STRING = "string",
+  NUMBER = "number",
+  BOOLEAN = "boolean",
+  OBJECT = "object",
+  ARRAY = "array",
 }
 
 export const typeMap: Record<DataType, any> = {
-  [DataType.STRING]: '',
+  [DataType.STRING]: "",
   [DataType.BOOLEAN]: true,
   [DataType.NUMBER]: 0,
   [DataType.OBJECT]: {},
@@ -41,16 +41,16 @@ export const getQuoteAddress = (
   currentData: {
     [keyof: string]: any;
   },
-  isChangingKey = false,
+  isChangingKey = false
 ) => {
   // because first index is root index, don't find it.
-  const indexKeys = uniqueKey.split('-').slice(1);
+  const indexKeys = uniqueKey.split("-").slice(1);
   setNewValue(indexKeys, currentData, newElement, isChangingKey);
   return currentData;
 };
 
 export const isObject = (value: any) => {
-  return !!(value && typeof value === 'object');
+  return !!(value && typeof value === "object");
 };
 
 export const getPlaceholder = (value: any) => {
@@ -64,13 +64,13 @@ export const getPlaceholder = (value: any) => {
 };
 
 export const navigateSchema = (jsonSchema: any, path: string[]): any => {
-  const current = path.shift() || '';
+  const current = path.shift() || "";
   let result: any = {};
   if (/\\d+\]/.test(current)) {
-    const index = current.replace(/[\[\]]/g, '');
+    const index = current.replace(/[\[\]]/g, "");
     result = navigateSchema(jsonSchema?.properties?.[index], path);
   } else if (current) {
-    result = navigateSchema(jsonSchema?.properties?.[current] || jsonSchema?.properties?.['*'], path);
+    result = navigateSchema(jsonSchema?.properties?.[current] || jsonSchema?.properties?.["*"], path);
   } else {
     result = jsonSchema;
   }
@@ -80,18 +80,18 @@ export const navigateSchema = (jsonSchema: any, path: string[]): any => {
 export const getSchemaObject = (jsonSchema: any, parentPath: string, fieldKey: string) => {
   const all = navigateSchema(
     jsonSchema,
-    [...parentPath.split('.'), '*'].filter((path) => path != ''),
+    [...parentPath.split("."), "*"].filter((path) => path != "")
   );
   const detail = navigateSchema(
     jsonSchema,
-    [...parentPath.split('.'), fieldKey].filter((path) => path != ''),
+    [...parentPath.split("."), fieldKey].filter((path) => path != "")
   );
   return all || detail || {};
 };
 
 export const getParentRef = (jsObject: any, parentPath: string) => {
   let currentParent = jsObject;
-  const arrPath = parentPath.split('.');
+  const arrPath = parentPath.split(".");
   arrPath.forEach((path) => {
     const result = /(.*)\[(\d+)\]$/.exec(path);
     if (result) {
@@ -105,7 +105,7 @@ export const getParentRef = (jsObject: any, parentPath: string) => {
 };
 
 export const getParent = (jsObject: any, uniqueKey: string, upper = false) => {
-  const arr = [...uniqueKey.split('-')];
+  const arr = [...uniqueKey.split("-")];
   arr.shift();
   arr.pop();
   if (upper) {
@@ -124,7 +124,7 @@ const getParentRecursive = (jsObject: any, uniqueArr: string[]): any => {
     return jsObject;
   } else {
     if (Array.isArray(jsObject)) {
-      return getParentRecursive(jsObject[currentIndex], currentArr);
+      return getParentRecursive(jsObject[+currentIndex], currentArr);
     } else {
       let found = {};
       Object.values(jsObject).forEach((value, index) => {

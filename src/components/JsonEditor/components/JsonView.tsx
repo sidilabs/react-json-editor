@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useMemo, useRef, useState } from 'react';
-import { DataType, getParent, getParentRef, getQuoteAddress, getSchemaObject, getTypeString, typeMap } from '../common';
+import React, { useMemo, useRef, useState } from "react";
+import { DataType, getParent, getParentRef, getQuoteAddress, getSchemaObject, getTypeString, typeMap } from "../common";
 
-import { ConfigContext } from '../store';
-import ArrayView from './ArrayView';
+import { ConfigContext } from "../store";
+import ArrayView from "./ArrayView";
 
-import RenderJsonConfig from './RenderJsonConfig';
-import { useCallback } from 'react';
-import { SelectBoolean, SelectOptions } from './Selects';
-import JsonRender from './JsonRender';
+import RenderJsonConfig from "./RenderJsonConfig";
+import { useCallback } from "react";
+import { SelectBoolean, SelectOptions } from "./Selects";
+import JsonRender from "./JsonRender";
 
 export type JsonViewProps = {
   setEditObject: any;
@@ -48,7 +48,7 @@ function JsonView(props: JsonViewProps) {
       }
       syncData(editObject);
     },
-    [editObjectString],
+    [editObjectString]
   );
 
   const onChangeType = useCallback((type: DataType, uniqueKey: string) => {
@@ -62,16 +62,16 @@ function JsonView(props: JsonViewProps) {
       currentKey: string,
       uniqueKey: string,
       source: Record<string, any>,
-      parentKey: string,
-      parentPath: string,
+      _parentKey: string,
+      parentPath: string
     ) => {
-      const pathArray = parentPath.split('.');
+      const pathArray = parentPath.split(".");
 
-      const selfIsGlobal = parentPath == '';
+      const selfIsGlobal = parentPath == "";
       const parentIsGlobal = pathArray.length == 1;
       const upperParentArray = [...pathArray];
       const keyParent = upperParentArray.pop() as string;
-      const upperParentPath = upperParentArray.join('.');
+      const upperParentPath = upperParentArray.join(".");
       const upperParentRef = getParentRef(source, upperParentPath);
 
       const targetRef = selfIsGlobal ? source : getParentRef(source, parentPath);
@@ -87,7 +87,7 @@ function JsonView(props: JsonViewProps) {
       }
       for (const [key, value] of Object.entries(targetRef)) {
         if (key === currentKey) {
-          newValue[(hasCollision ? `$E-${collisionRef.current}$_` : '') + event.target.value] = targetRef[key];
+          newValue[(hasCollision ? `$E-${collisionRef.current}$_` : "") + event.target.value] = targetRef[key];
         } else {
           newValue[key] = value;
         }
@@ -103,19 +103,19 @@ function JsonView(props: JsonViewProps) {
 
       syncData(source);
     },
-    [editObjectString],
+    [editObjectString]
   );
 
-  const onChangeValue = (value: any, key: string, _: Record<string, any>, deepLevel = 0, uniqueKey = '') => {
+  const onChangeValue = (value: any, key: string, _: Record<string, any>, deepLevel = 0, uniqueKey = "") => {
     const source = getParent(editObjectRef.current, uniqueKey);
     source[key] = value;
     if (deepLevel == 1) {
       syncData(source);
     } else {
       const arrPath: string[] = [];
-      uniqueKey.split('.').forEach((p) => {
+      uniqueKey.split(".").forEach((p) => {
         if (/.*\[\d+\]/.test(p)) {
-          arrPath.push(p.replace(/\[\d*\]/, ''));
+          arrPath.push(p.replace(/\[\d*\]/, ""));
         } else {
           arrPath.push(p);
         }
@@ -130,7 +130,7 @@ function JsonView(props: JsonViewProps) {
     key: string,
     source: Record<string, any>,
     deepLevel = 0,
-    parentPath = '',
+    parentPath = ""
   ) => {
     if (timerValueRef.current) {
       clearTimeout(timerValueRef.current);
@@ -149,10 +149,10 @@ function JsonView(props: JsonViewProps) {
       parentUniqueKey: string,
       parentPath: string,
       schema: any,
-      allowMap: any,
+      allowMap: any
     ) => {
       const thatType = getTypeString(fieldValue);
-      const newParentPath = `${!!parentPath ? parentPath + '.' : ''}${fieldKey}`;
+      const newParentPath = `${!!parentPath ? parentPath + "." : ""}${fieldKey}`;
       switch (thatType) {
         case DataType.ARRAY:
           return (
@@ -217,7 +217,7 @@ function JsonView(props: JsonViewProps) {
                   ref.value = fieldValue;
                 }
               }}
-              className={'inputNumber'}
+              className={"inputNumber"}
               type="number"
               onChange={(event) => {
                 onChangeValueDelayed(+(event.target.value || 0), fieldKey, sourceData, deepLevel, parentUniqueKey);
@@ -237,14 +237,14 @@ function JsonView(props: JsonViewProps) {
       }
       return null;
     },
-    [],
+    []
   );
   const onChangeAllow = useCallback(
     (uniqueKey: string) => {
       allowMap[uniqueKey] = !allowMap[uniqueKey];
       setAllowMap({ ...allowMap });
     },
-    [JSON.stringify(allowMap)],
+    [JSON.stringify(allowMap)]
   );
 
   const value = useMemo(
@@ -267,7 +267,7 @@ function JsonView(props: JsonViewProps) {
       onChangeAllow,
       JSON.stringify(allowMap),
       JSON.stringify(props.schema),
-    ],
+    ]
   );
   return (
     <ConfigContext.Provider value={value}>
