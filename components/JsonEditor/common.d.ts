@@ -16,3 +16,5 @@ export declare const isObject: (value: any) => boolean;
 export declare const getPlaceholder: (value: any) => string | null;
 export declare const navigateSchema: (jsonSchema: any, path: string[]) => any;
 export declare const getSchemaObject: (jsonSchema: any, parentPath: string, fieldKey: string) => any;
+export declare const getParentRef: (jsObject: any, parentPath: string) => any;
+export declare const getParent: (jsObject: any, uniqueKey: string, upper?: boolean) => any;

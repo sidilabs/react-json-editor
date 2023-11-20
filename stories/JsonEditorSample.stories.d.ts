@@ -1,7 +1,7 @@
 import type { StoryObj } from "@storybook/react";
 declare const meta: {
     title: string;
-    component: ({ data, onChange, schema, optionsMap, width }: import("../components/JsonEditor").JsonEditorProps) => import("react/jsx-runtime").JSX.Element;
+    component: () => import("react/jsx-runtime").JSX.Element;
     parameters: {
         layout: string;
     };
@@ -10,4 +10,4 @@ declare const meta: {
 };
 export default meta;
 type Story = StoryObj<typeof meta>;
-export declare const Static: Story;
+export declare const Sample: Story;
